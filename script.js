@@ -55,6 +55,7 @@ async function sendMessage() {
         }
 
         const data = await response.json();
+        console.log('API Response:', data);
         
         // Hide typing indicator
         hideTypingIndicator();
