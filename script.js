@@ -91,6 +91,11 @@ function addMessage(content, className) {
 }
 
 function formatMessage(content) {
+    // Check if content exists and is a string
+    if (!content || typeof content !== 'string') {
+        return 'No response received';
+    }
+    
     // Basic formatting for code blocks and markdown-like content
     return content
         .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
