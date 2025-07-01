@@ -1,6 +1,6 @@
 import json
 import os
-import requests
+#import requests
 from http.server import BaseHTTPRequestHandler
 
 class handler(BaseHTTPRequestHandler):
@@ -28,7 +28,7 @@ class handler(BaseHTTPRequestHandler):
             
             if claude_response:
                 # Send successful response
-                self.send_success_response({'response feedback': claude_response})
+                self.send_success_response({'response feedback'+claude_response: claude_response})
             else:
                 self.send_error_response(500, 'Failed to get response from Claude')
                 

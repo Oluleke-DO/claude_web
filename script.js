@@ -28,7 +28,7 @@ async function sendMessage() {
     
     // Disable input while processing
     setInputState(false);
-    updateStatus('Sending...'+message);
+    updateStatus('Sending...');
     
     // Display user message
     addMessage(message, 'user-message');
@@ -93,7 +93,7 @@ function addMessage(content, className) {
 function formatMessage(content) {
     // Check if content exists and is a string
     if (!content || typeof content !== 'string') {
-        return 'No response received :'+ content;
+        return 'No response received';
     }
     
     // Basic formatting for code blocks and markdown-like content
