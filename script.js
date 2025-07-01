@@ -93,7 +93,7 @@ function addMessage(content, className) {
 function formatMessage(content) {
     // Check if content exists and is a string
     if (!content || typeof content !== 'string') {
-        return 'No response received';
+        return 'No response received :'+ content;
     }
     
     // Basic formatting for code blocks and markdown-like content
