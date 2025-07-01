@@ -14,34 +14,33 @@ class handler(BaseHTTPRequestHandler):
             # Get the message from the request
             message = data.get('message')
             if not message:
-                self.send_error_response(400, 'Message is required')
+                self.send_json_response(400, {'error': 'Message is required'})
                 return
             
             # Get Claude API key from environment variables
             api_key = os.environ.get('CLAUDE_API_KEY')
             if not api_key:
-                self.send_error_response(500, 'API key not configured')
+                self.send_json_response(500, {'error': 'API key not configured'})
                 return
             
             # Call Claude API
-            claude_response = self.call_claude_api(api_key, message)
+            claude_text = self.call_claude_api(api_key, message)
             
-            if claude_response:
+            if claude_text:
                 # Send successful response
-                self.send_success_response({'response feedback'+claude_response: claude_response})
+                self.send_json_response(200, {'response': claude_text})
             else:
-                self.send_error_response(500, 'Failed to get response from Claude')
+                self.send_json_response(500, {'error': 'Failed to get response from Claude'})
                 
-        except json.JSONDecodeError:
-            self.send_error_response(400, 'Invalid JSON in request body')
         except Exception as e:
             print(f"Error: {str(e)}")
-            self.send_error_response(500, f'Internal server error: {str(e)}')
+            self.send_json_response(500, {'error': f'Internal server error: {str(e)}'})
     
     def do_OPTIONS(self):
-        # Handle CORS preflight requests
         self.send_response(200)
-        self.send_cors_headers()
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
     
     def call_claude_api(self, api_key, message):
@@ -54,14 +53,9 @@ class handler(BaseHTTPRequestHandler):
             }
             
             payload = {
-                'model': 'claude-3-5-haiku-20241022',  # Change to claude-3-haiku-20240307  'for cheaper
+                'model': 'claude-3-5-sonnet-20241022',
                 'max_tokens': 1000,
-                'messages': [
-                    {
-                        'role': 'user',
-                        'content': message
-                    }
-                ]
+                'messages': [{'role': 'user', 'content': message}]
             }
             
             response = requests.post(url, headers=headers, json=payload, timeout=30)
@@ -73,28 +67,17 @@ class handler(BaseHTTPRequestHandler):
                 print(f"Claude API error: {response.status_code} - {response.text}")
                 return None
                 
-        except requests.exceptions.Timeout:
-            print("Request to Claude API timed out")
-            return None
         except Exception as e:
             print(f"Error calling Claude API: {str(e)}")
             return None
     
-    def send_success_response(self, data):
-        self.send_response(200)
-        self.send_cors_headers()
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode())
-    
-    def send_error_response(self, status_code, message):
+    def send_json_response(self, status_code, data):
         self.send_response(status_code)
-        self.send_cors_headers()
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps({'error': message}).encode())
-    
-    def send_cors_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        
+        json_data = json.dumps(data)
+        self.wfile.write(json_data.encode('utf-8'))
