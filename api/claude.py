@@ -56,7 +56,13 @@ class handler(BaseHTTPRequestHandler):
                 'model': 'claude-3-5-sonnet-20241022',
                 'max_tokens': 1000,
                 'messages': [{'role': 'user', 'content': message}],
-               
+                'tools':[
+                    {
+                        "type": "web_search_20250305",
+                        "name": "web_search",
+                        "max_uses": 3
+                    }
+                ]
             }
             
             response = requests.post(url, headers=headers, json=payload, timeout=30)
