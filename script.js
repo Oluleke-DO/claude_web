@@ -28,7 +28,7 @@ async function sendMessage() {
     
     // Disable input while processing
     setInputState(false);
-    updateStatus('Sending...');
+    updateStatus('Sending...'+message);
     
     // Display user message
     addMessage(message, 'user-message');
