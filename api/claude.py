@@ -54,7 +54,7 @@ class handler(BaseHTTPRequestHandler):
             }
             
             payload = {
-                'model': 'claude-3-sonnet-20240229',  # Change to claude-3-haiku-20240307 for cheaper
+                'model': 'claude-3-5-haiku-20241022',  # Change to claude-3-haiku-20240307  'for cheaper
                 'max_tokens': 1000,
                 'messages': [
                     {
